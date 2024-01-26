@@ -41,3 +41,7 @@ class cart_add(serializers.ModelSerializer):
     class Meta:
         model = Card
         fields = ('quantity','menu_item',)
+#
+        #
+        #
+        #
