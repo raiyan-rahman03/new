@@ -17,6 +17,13 @@ class Card(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
+    quantity_price = models.DecimalField(max_digits=6, decimal_places=2, default=1) 
+    price = models.DecimalField(max_digits=6, decimal_places=2, default=1)
+    def save(self, *args, **kwargs):
+    # Set the price based on the menu_item
+        self.quantity_price = self.menu_item.price
+        self.price = self.menu_item.price * self.quantity
+        super(Card, self).save(*args, **kwargs)
     
    
 
@@ -28,8 +35,9 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     status = models.BooleanField(db_index=True,default=False)
     total = models.DecimalField(max_digits=6, decimal_places=2)
-    date = models.DateTimeField(auto_now_add=True,db_index=True)
+    date = models.DateTimeField(default=0)
     delivery_crew = models.ForeignKey(User, related_name='delivery_crew', on_delete=models.SET_NULL ,null=True)
+    
 
 
 

@@ -191,6 +191,10 @@ class oder_view(generics.ListAPIView):
 class user_order(generics.ListAPIView):
     serializer_class = orderitem_s
     queryset = OrderItem.objects.all()
-
-    
+    def perform_create(self,serializer):
+        user = self.request.user
+        user_card = get_object_or_404(Card ,user)
+        Menuitem = user_card.menu_item
+        quantity = user_card.quantity
+        
     
