@@ -184,11 +184,12 @@ class cart_del(generics.RetrieveDestroyAPIView):
 class oder_view(generics.ListAPIView):
     serializer_class = Order_s
     queryset = Order.objects.all()
+    
 
 
     
 
-class user_order(generics.ListAPIView):
+class user_order(generics.CreateAPIView):
     serializer_class = orderitem_s
     queryset = OrderItem.objects.all()
     def perform_create(self,serializer):
@@ -196,5 +197,11 @@ class user_order(generics.ListAPIView):
         user_card = get_object_or_404(Card ,user)
         Menuitem = user_card.menu_item
         quantity = user_card.quantity
+        unit_price = user_card.quantity_price
+        price = user_card.price
+
         
+        serializer.save(menu_item =Menuitem,quantity =quantity ,unit_price = unit_price ,price =price )
+
+
     

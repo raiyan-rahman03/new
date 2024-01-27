@@ -36,7 +36,7 @@ class UserSerializer(serializers.ModelSerializer):
 class cart_get(serializers.ModelSerializer):
     class Meta:
         model = Card
-        fields = ('quantity','menu_item','user',)
+        fields = '__all__'
 class cart_add(serializers.ModelSerializer):
     class Meta:
         model = Card
