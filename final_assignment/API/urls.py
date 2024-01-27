@@ -16,7 +16,8 @@ urlpatterns = [
     path('cartt',CartAddView.as_view()),
    
     path('cart_del/' ,cart_del.as_view()),
-
+    path('order' , oder_view.as_view()),
+    path('oderitem' , user_order.as_view())
 
 ]
     

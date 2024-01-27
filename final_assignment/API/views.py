@@ -180,3 +180,16 @@ class cart_del(generics.RetrieveDestroyAPIView):
 
         # Delete the cart instance
         queryset.delete()
+
+class oder_view(generics.ListAPIView):
+    serializer_class = Order_s
+    queryset = Order.objects.all()
+
+
+    
+
+class user_order(generics.ListAPIView):
+    serializer_class = orderitem_s
+    queryset = OrderItem.objects.all()
+
+    
