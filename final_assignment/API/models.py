@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.utils import timezone 
 
 
 class Category(models.Model):
@@ -35,7 +35,7 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     status = models.BooleanField(db_index=True,default=False)
     total = models.DecimalField(max_digits=6, decimal_places=2)
-    date = models.DateTimeField(default=0)
+    date = models.DateTimeField(default=timezone.now, db_index=True)
     delivery_crew = models.ForeignKey(User, related_name='delivery_crew', on_delete=models.SET_NULL ,null=True)
     
 

@@ -35,7 +35,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Order',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=True, verbose_name='ID')),
                 ('status', models.BooleanField(db_index=True, default=False)),
                 ('total', models.DecimalField(decimal_places=2, max_digits=6)),
                 ('date', models.DateTimeField(auto_now_add=True, db_index=True)),

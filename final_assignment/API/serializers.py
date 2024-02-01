@@ -46,8 +46,18 @@ class Order_s(serializers.ModelSerializer):
     
     class Meta:
         model = Order
-        fields = '__all__'
+        fields = "__all__"
 class orderitem_s(serializers.ModelSerializer):
+    class Meta:
+        model = OrderItem
+        fields = '__all__'
+
+class Order_post(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Order
+        fields = '__all__'
+class orderitem_post(serializers.ModelSerializer):
     class Meta:
         model = OrderItem
         fields = '__all__'

@@ -181,27 +181,39 @@ class cart_del(generics.RetrieveDestroyAPIView):
         # Delete the cart instance
         queryset.delete()
 
-class oder_view(generics.ListAPIView):
+
+class oder_view(generics.ListCreateAPIView):
     serializer_class = Order_s
-    queryset = Order.objects.all()
-    
+
+    def get_queryset(self):
+
+        return Order.objects.filter(user=self.request.user)
+# eita thik hoisilo
 
 
-    
+class oder_view_post(generics.ListAPIView):
+    ''' eita user er  order show kora hoise 
 
-class user_order(generics.CreateAPIView):
-    serializer_class = orderitem_s
-    queryset = OrderItem.objects.all()
-    def perform_create(self,serializer):
+      '''
+    serializer_class = Order_post
+
+    def get_queryset(self):
         user = self.request.user
-        user_card = get_object_or_404(Card ,user)
-        Menuitem = user_card.menu_item
-        quantity = user_card.quantity
-        unit_price = user_card.quantity_price
-        price = user_card.price
+        return Order.objects.filter(user=user)
+        # eitar kaj baki ase eita order dei
 
-        
-        serializer.save(menu_item =Menuitem,quantity =quantity ,unit_price = unit_price ,price =price )
+    def perform_create(self, serializer):
+        user = self.request.user
+        user_card = get_object_or_404(Card, user=user)
+        total = user_card.price
+        serializer.save(user=user, total=total)
 
 
-    
+class user_order(generics.ListAPIView):  # user er order item show kore
+    serializer_class = orderitem_post
+
+    def get_queryset(self):
+        # Assuming you want to get the first order associated with the user
+        user_order = Order.objects.filter(user=self.request.user).first()
+
+        return OrderItem.objects.filter(order_id=user_order.id)
