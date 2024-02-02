@@ -233,5 +233,10 @@ class user_order(generics.ListAPIView):  # user er order item show kore
         # Assuming you want to get all order items related to the user's orders
         user_orders = Order.objects.filter(user=self.request.user)
         order_items_list = OrderItem.objects.filter(order__in=user_orders)
+        '''
+order__in=user_orders: This filter is applied to the OrderItem model, and it means "give me all OrderItem instances 
+where the order field is in the list of orders specified by user_orders." It's a way to filter OrderItem instances
+based on a relationship with the related Order model.
+        '''
 
         return order_items_list 
