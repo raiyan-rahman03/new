@@ -56,7 +56,7 @@ class Order_post(serializers.ModelSerializer):
     
     class Meta:
         model = Order
-        fields = '__all__'
+        fields = ''
 class orderitem_post(serializers.ModelSerializer):
     class Meta:
         model = OrderItem

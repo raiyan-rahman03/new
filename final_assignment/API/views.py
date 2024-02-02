@@ -182,7 +182,7 @@ class cart_del(generics.RetrieveDestroyAPIView):
         queryset.delete()
 
 
-class oder_view(generics.ListCreateAPIView):
+class oder_view(generics.ListAPIView):
     serializer_class = Order_s
 
     def get_queryset(self):
@@ -191,29 +191,47 @@ class oder_view(generics.ListCreateAPIView):
 # eita thik hoisilo
 
 
-class oder_view_post(generics.ListAPIView):
-    ''' eita user er  order show kora hoise 
+class oder_view_post(generics.CreateAPIView):
+    ''' eita user er  order post kore hoise 
 
       '''
     serializer_class = Order_post
+    
 
     def get_queryset(self):
         user = self.request.user
         return Order.objects.filter(user=user)
-        # eitar kaj baki ase eita order dei
+ 
 
     def perform_create(self, serializer):
         user = self.request.user
         user_card = get_object_or_404(Card, user=user)
         total = user_card.price
-        serializer.save(user=user, total=total)
+
+        # Save the Order object first to get its ID
+        order = serializer.save(user=user, total=total)
+
+        # Automatically create OrderItem objects for each item in the user's card
+        
+        
+        OrderItem.objects.create(
+                order=order,  # Use the newly created Order object
+                menu_item=user_card.menu_item,
+                quantity=user_card.quantity,
+                unit_price=user_card.quantity_price,
+                price=user_card.price
+            )
+            
+        user_card.delete()
+        # eitar kaj baki ase eita order dei and orderitems create kore and delete kore 
 
 
 class user_order(generics.ListAPIView):  # user er order item show kore
     serializer_class = orderitem_post
 
     def get_queryset(self):
-        # Assuming you want to get the first order associated with the user
-        user_order = Order.objects.filter(user=self.request.user).first()
+        # Assuming you want to get all order items related to the user's orders
+        user_orders = Order.objects.filter(user=self.request.user)
+        order_items_list = OrderItem.objects.filter(order__in=user_orders)
 
-        return OrderItem.objects.filter(order_id=user_order.id)
+        return order_items_list 
