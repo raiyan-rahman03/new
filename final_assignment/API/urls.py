@@ -18,7 +18,10 @@ urlpatterns = [
     path('cart_del/' ,cart_del.as_view()),
     path('order' , oder_view.as_view()),
     path('order_post' , oder_view_post.as_view()),
-    path('oderitem' , user_order.as_view())
+    path('oderitem' , user_order.as_view()),
+
+    path('all_order/<int:pk>',manager_order_up.as_view()),
+
 
 ]
     

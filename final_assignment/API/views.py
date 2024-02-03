@@ -186,8 +186,18 @@ class oder_view(generics.ListAPIView):
     serializer_class = Order_s
 
     def get_queryset(self):
+        if self.request.user.groups.filter(name="Manager").exists():
+            return Order.objects.all()
+        elif self.request.user.groups.filter(name="delivery").exists():
+            return Order.objects.filter(delivery=self.request.user)
+        else:
+            return Order.objects.filter(user=self.request.user)
+        
 
-        return Order.objects.filter(user=self.request.user)
+
+
+    
+ 
 # eita thik hoisilo
 
 
@@ -196,12 +206,10 @@ class oder_view_post(generics.CreateAPIView):
 
       '''
     serializer_class = Order_post
-    
 
     def get_queryset(self):
         user = self.request.user
         return Order.objects.filter(user=user)
- 
 
     def perform_create(self, serializer):
         user = self.request.user
@@ -212,18 +220,17 @@ class oder_view_post(generics.CreateAPIView):
         order = serializer.save(user=user, total=total)
 
         # Automatically create OrderItem objects for each item in the user's card
-        
-        
+
         OrderItem.objects.create(
-                order=order,  # Use the newly created Order object
-                menu_item=user_card.menu_item,
-                quantity=user_card.quantity,
-                unit_price=user_card.quantity_price,
-                price=user_card.price
-            )
-            
+            order=order,  # Use the newly created Order object
+            menu_item=user_card.menu_item,
+            quantity=user_card.quantity,
+            unit_price=user_card.quantity_price,
+            price=user_card.price
+        )
+
         user_card.delete()
-        # eitar kaj baki ase eita order dei and orderitems create kore and delete kore 
+        # eitar kaj baki ase eita order dei and orderitems create kore and delete kore
 
 
 class user_order(generics.ListAPIView):  # user er order item show kore
@@ -233,10 +240,16 @@ class user_order(generics.ListAPIView):  # user er order item show kore
         # Assuming you want to get all order items related to the user's orders
         user_orders = Order.objects.filter(user=self.request.user)
         order_items_list = OrderItem.objects.filter(order__in=user_orders)
-        '''
+        return order_items_list
+    
+'''
 order__in=user_orders: This filter is applied to the OrderItem model, and it means "give me all OrderItem instances 
 where the order field is in the list of orders specified by user_orders." It's a way to filter OrderItem instances
-based on a relationship with the related Order model.
-        '''
+based on a relationship with the related Order model.'''
 
-        return order_items_list 
+
+#order
+class manager_order_up(generics.RetrieveUpdateAPIView):
+    serializer_class = Order_s
+    queryset = Order.objects.all()    
+
