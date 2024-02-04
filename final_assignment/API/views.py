@@ -182,22 +182,20 @@ class cart_del(generics.RetrieveDestroyAPIView):
         queryset.delete()
 
 
+@permission_classes([IsAuthenticated])
 class oder_view(generics.ListAPIView):
-    serializer_class = Order_s
+    serializer_class = OrderSerializer
 
     def get_queryset(self):
         if self.request.user.groups.filter(name="Manager").exists():
+
             return Order.objects.all()
         elif self.request.user.groups.filter(name="delivery").exists():
-            return Order.objects.filter(delivery=self.request.user)
+            return Order.objects.filter(delivery_crew=self.request.user)
         else:
             return Order.objects.filter(user=self.request.user)
-        
 
 
-
-    
- 
 # eita thik hoisilo
 
 
@@ -238,18 +236,45 @@ class user_order(generics.ListAPIView):  # user er order item show kore
 
     def get_queryset(self):
         # Assuming you want to get all order items related to the user's orders
-        user_orders = Order.objects.filter(user=self.request.user)
-        order_items_list = OrderItem.objects.filter(order__in=user_orders)
-        return order_items_list
-    
+
+        if self.request.user.groups.filter(name="Manager").exists():
+            return OrderItem.objects.all()
+        elif self.request.user.groups.filter(name="delivery").exists():
+            order_for_delivery = Order.objects.filter(
+                delivery_crew=self.request.user)
+            return OrderItem.filter(order__in=order_for_delivery)
+        else:
+            user_orders = Order.objects.filter(user=self.request.user)
+            return OrderItem.objects.filter(order__in=user_orders)
+
+
 '''
 order__in=user_orders: This filter is applied to the OrderItem model, and it means "give me all OrderItem instances 
 where the order field is in the list of orders specified by user_orders." It's a way to filter OrderItem instances
-based on a relationship with the related Order model.'''
+based on a relationship with the related Order model.
+'''
 
 
-#order
-class manager_order_up(generics.RetrieveUpdateAPIView):
-    serializer_class = Order_s
-    queryset = Order.objects.all()    
+# order
+class manager_order_up_and_dev(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Order.objects.all()  # Set the default queryset
+    # Set the default serializer class
 
+    def get_queryset(self):
+        if self.request.user.groups.filter(name="Manager").exists():
+            return Order.objects.all()  # Managers can view all orders
+        elif self.request.user.groups.filter(name="delivery").exists():
+            # Delivery users can view their assigned orders
+            return Order.objects.filter(delivery_crew=self.request.user)
+        return Order.objects.none()  # Other users cannot view any orders
+
+    def delete(self, request, *args, **kwargs):
+        if not self.request.user.groups.filter(name="Manager").exists():
+            return Response({"error": "Only managers can delete orders."}, status=status.HTTP_403_FORBIDDEN)
+        return super().delete(request, *args, **kwargs)
+
+    def get_serializer_class(self):
+        if self.request.user.groups.filter(name="delivery").exists():
+            return delivery  # Use DeliverySerializer for delivery users
+        if self.request.user.groups.filter(name="Manager").exists():
+            return OrderSerializer

@@ -42,11 +42,7 @@ class cart_add(serializers.ModelSerializer):
         model = Card
         fields = ('quantity','menu_item',)
 
-class Order_s(serializers.ModelSerializer):
-    
-    class Meta:
-        model = Order
-        fields = "__all__"
+
 class orderitem_s(serializers.ModelSerializer):
     class Meta:
         model = OrderItem
@@ -57,7 +53,32 @@ class Order_post(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ''
+class Order_s(serializers.ModelSerializer):
+    order_items = orderitem_s(many=True, read_only=True)
+
+    
+    class Meta:
+        model = Order
+        fields = '__all__'
 class orderitem_post(serializers.ModelSerializer):
     class Meta:
         model = OrderItem
         fields = '__all__'
+##
+        
+
+class OrderItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderItem
+        fields = '__all__'
+
+class OrderSerializer(serializers.ModelSerializer):
+    order_items = OrderItemSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Order
+        fields = '__all__'
+class delivery(serializers.ModelSerializer):
+    class  Meta:
+        model =Order
+        fields=['status']
