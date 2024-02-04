@@ -13,9 +13,7 @@ from rest_framework import status
 from django.http import HttpResponse
 
 # upre gula important import
-
 # catagory list er api class eta
-
 
 class CategoryListView(generics.ListAPIView):
     queryset = Category.objects.all()
@@ -23,26 +21,20 @@ class CategoryListView(generics.ListAPIView):
 
 # menuitem er api jetate manager only kaj korte parbe maneh notun menu item add korbe
 
-
 class Manager_menuItems(generics.ListCreateAPIView):
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
-
 # menuitem er api jetate manager only kaj korte parbe maneh menu item update and delete korbe
-
 
 class Manager_menuItem(generics.RetrieveUpdateDestroyAPIView):
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
-
 
 '''ei nicher func ta mainly use kora jate single endpoint use kore alada
  functionality use kora jai jemon manager jokhon user hobe tokhon she add dlt upd etc 
  korte parbe and user mean customer jokhon dhukbe tokhon only menu items dekhte parbe 
  kisu korte parbena  
 '''
-
-
 @csrf_exempt  # eita use korte hoi jate auth error na khai dev environment eh
 # eita check korbe request taki authenticated kina
 @permission_classes([IsAuthenticated])
@@ -65,7 +57,6 @@ def menu_items_view(request, pk=None):
         if pk is not None:
             return single_menu_item(request, pk=pk)
 
-
 # for normal staff user or customer to get all menu
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -78,7 +69,6 @@ def all_menu_items(request):
         return Response(status=403)
 
 # for normal staff user or customer to get single menu
-
 
 @api_view(['GET'])
 def single_menu_item(request, pk):
@@ -132,7 +122,6 @@ def group_org(request, name):
     else:
         return Response({"detail": "Permission denied."}, status=403)
 
-
 @permission_classes([IsAuthenticated])
 @api_view(['DELETE'])
 def delete_grp_user(request, id, name):
@@ -146,14 +135,12 @@ def delete_grp_user(request, id, name):
     except:
         return Response({"detail": f"Failed to remove user with id {id} from group {name}."}, status=400)
 
-
 class CartView(generics.ListAPIView):
     serializer_class = cart_get
 
     def get_queryset(self):
         # Filter the queryset based on the current user
         return Card.objects.filter(user=self.request.user)
-
 
 class CartAddView(generics.CreateAPIView):
     serializer_class = cart_add
@@ -168,7 +155,6 @@ class CartAddView(generics.CreateAPIView):
         serializer.save(user=self.request.user)
         return Response({"detail": "Cart item created successfully."})
 
-
 class cart_del(generics.RetrieveDestroyAPIView):
     serializer_class = cart_get
 
@@ -180,7 +166,6 @@ class cart_del(generics.RetrieveDestroyAPIView):
 
         # Delete the cart instance
         queryset.delete()
-
 
 @permission_classes([IsAuthenticated])
 class oder_view(generics.ListAPIView):
@@ -195,10 +180,7 @@ class oder_view(generics.ListAPIView):
         else:
             return Order.objects.filter(user=self.request.user)
 
-
 # eita thik hoisilo
-
-
 class oder_view_post(generics.CreateAPIView):
     ''' eita user er  order post kore hoise 
 
@@ -246,14 +228,11 @@ class user_order(generics.ListAPIView):  # user er order item show kore
         else:
             user_orders = Order.objects.filter(user=self.request.user)
             return OrderItem.objects.filter(order__in=user_orders)
-
-
 '''
 order__in=user_orders: This filter is applied to the OrderItem model, and it means "give me all OrderItem instances 
 where the order field is in the list of orders specified by user_orders." It's a way to filter OrderItem instances
 based on a relationship with the related Order model.
 '''
-
 
 # order
 class manager_order_up_and_dev(generics.RetrieveUpdateDestroyAPIView):
