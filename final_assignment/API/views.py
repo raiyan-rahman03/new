@@ -278,3 +278,4 @@ class manager_order_up_and_dev(generics.RetrieveUpdateDestroyAPIView):
             return delivery  # Use DeliverySerializer for delivery users
         if self.request.user.groups.filter(name="Manager").exists():
             return OrderSerializer
+
