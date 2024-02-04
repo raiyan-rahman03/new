@@ -279,3 +279,4 @@ class manager_order_up_and_dev(generics.RetrieveUpdateDestroyAPIView):
         if self.request.user.groups.filter(name="Manager").exists():
             return OrderSerializer
 
+
