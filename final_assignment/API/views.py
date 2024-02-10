@@ -24,11 +24,13 @@ class CategoryListView(generics.ListAPIView):
 class Manager_menuItems(generics.ListCreateAPIView):
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
+    search_fields=['title']
 # menuitem er api jetate manager only kaj korte parbe maneh menu item update and delete korbe
 
 class Manager_menuItem(generics.RetrieveUpdateDestroyAPIView):
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
+    search_fields=['title']
 
 '''ei nicher func ta mainly use kora jate single endpoint use kore alada
  functionality use kora jai jemon manager jokhon user hobe tokhon she add dlt upd etc 
